@@ -1,8 +1,10 @@
 '''
 this file contains the driver code and the GUI
 '''
-#star    end      date
-#8:30    11:00    11/15/2020
+#start         end      date            comment
+#08:30 pm    11:00 pm    11/15/2020
+#11:30 am    02:00 pm    11/16/2020     chess layout is done but moves are not working properly
+#09:00 pm    10:15 pm    11/16/2020     fixed chess moves, peices could move but still no legal moves set
 
 
 import pygame
@@ -31,10 +33,31 @@ def main():
     gs = chessengine.gameState()
     loadImages()
     running = True
+    sqaureSelected = () #stores number of selected square
+    playerClicks = [] #stores a players clicl
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                location = pygame.mouse.get_pos() #gets x,y location of mouse
+                mCol = location[0]//squareSize
+                mRow = location[1]//squareSize
+                if sqaureSelected == (mRow, mCol):
+                    sqaureSelected = () #unselect
+                    playerClicks = []
+                else:
+                    sqaureSelected = (mRow , mCol)
+                    playerClicks.append(sqaureSelected)
+                if len(playerClicks) == 2:
+                    move = chessengine.Move(playerClicks[0], playerClicks[1], gs.board)
+                    print(move.getChessNotation())
+                    gs.makeMove(move)
+                    sqaureSelected = () #reset the user click after clicking
+                    playerClicks = []
+
+
+
 
         clock.tick(maxfps)
         drawGameState(screen,gs)
