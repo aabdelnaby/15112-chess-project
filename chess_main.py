@@ -6,7 +6,7 @@ this file contains the driver code and the GUI
 #11:30 am    02:00 pm    11/16/2020     chess layout is done but moves are not working properly
 #09:00 pm    10:15 pm    11/16/2020     fixed chess moves, peices could move but still no legal moves set
 #09:30 am    10:40 am    11/17/2020     implemented an undo move function and put the basis for legal moves function
-
+#06:00 pm    09:40 pm    11/17/2020     created legal moves for pawn and rook and knight
 import pygame
 import chessengine
 width = 512
@@ -32,6 +32,7 @@ def main():
     screen.fill(pygame.Color('white'))
     gs = chessengine.gameState()
     validMoves = gs.getValidMoves()
+    moveMade = False
     loadImages()
     running = True
     sqaureSelected = () #stores number of selected square
@@ -45,7 +46,7 @@ def main():
                 location = pygame.mouse.get_pos() #gets x,y location of mouse
                 mCol = location[0]//squareSize
                 mRow = location[1]//squareSize
-                if sqaureSelected == (mRow, mCol):
+                if sqaureSelected == (mRow, mCol): #if the same square is clicked twice the move is cancelled
                     sqaureSelected = () #unselect
                     playerClicks = []
                 else:
@@ -54,13 +55,20 @@ def main():
                 if len(playerClicks) == 2:
                     move = chessengine.Move(playerClicks[0], playerClicks[1], gs.board)
                     print(move.getChessNotation())
-                    gs.makeMove(move)
+                    if move in validMoves:
+                        gs.makeMove(move)
+                        moveMade = True
                     sqaureSelected = () #reset the user click after clicking
                     playerClicks = []
             #keyboard events
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_z:
                     gs.undoMove()
+                    moveMade = True
+
+        if moveMade:
+            validMoves = gs.getValidMoves()
+            moveMade = False
 
 
 
@@ -96,7 +104,7 @@ if __name__ == '__main__':
     main()
 
 
-
+#66 lines of code
 
 
 

@@ -40,15 +40,72 @@ class gameState():
         for r in range(len(self.board)):
             for c in range(len(self.board[r])):
                 turn = self.board[r][c][0] #gives the turn (white,black or non)
-                if (turn == 'w' and self.whitemove) and (turn == 'b' and not self.whitemove):
+                if (turn == 'w' and self.whitemove) or (turn == 'b' and not self.whitemove):
                     piece = self.board[r][c][1] #get the type of peice
                     if piece == 'P':
-                        #place holder for pawn legal moves function
-                        pass
+                        self.getPawnMoves(r, c, moves)
                     if piece == 'R':
-                        #place holder for rook legal moves function
-                        pass
+                       self.getRookMoves(r, c, moves)
+                    if piece == 'N':
+                        self.getKnightMoves(r,c,moves)
+        return moves
 
+    #defining pawn legal moves
+    def getPawnMoves(self, r, c, moves):
+        if self.whitemove:#white pawn moves
+            if self.board[r-1][c] == '--': #if one space in front of the pawn is empty then it could move to it
+                moves.append(Move((r,c),(r-1,c),self.board))
+                if r == 6 and self.board[r-2][c] == '--': #if two spaces are empty then pawn could be moved to it
+                    moves.append(Move((r,c),(r-2,c),self.board))
+            if c-1 >= 0:#captures to the left
+                if self.board[r-1][c-1][0] == 'b':
+                    moves.append(Move((r,c),(r-1,c-1),self.board))
+            if c+1 <= 7: #captures right peice
+                moves.append(Move((r,c),(r-1,c+1),self.board))
+        else:
+            if self.board[r+1][c] == '--': #moves 1 or two front
+                moves.append(Move((r,c),(r+1,c),self.board))
+                if r == 1 and self.board[r+2][c] == '--':
+                    moves.append(Move((r,c),(r+2,c),self.board))
+            #captures
+            if c-1 >= 0: #capture to the left
+                if self.board[r+1][c-1][0] == 'w':
+                    moves.append(Move((r,c),(r+1,c-1),self.board))
+            if c+1 <= 7: #capture to the right
+                if self.board[r+1][c+1][0] == 'w':
+                    moves.append(Move((r, c), (r + 1, c + 1), self.board))
+
+
+
+    def getRookMoves(self, r, c, moves):
+        directions = ((-1,0),(0,1),(1,0),(0,1))
+        enemyColor = 'b' if self.whitemove else 'w' #to check if white or black turn
+        for d in directions:
+            for i in range(1,8):
+                endrow = r + d[0]*i
+                endcol = c + d[1]*i
+                if 0<= endrow < 8 and 0 <= endcol < 8:
+                    endPiece = self.board[endrow][endcol]
+                    if endPiece == '--':
+                        moves.append(Move((r,c),(endrow,endcol),self.board))
+                    elif endPiece[0] == enemyColor:
+                        moves.append(Move((r,c),(endrow,endcol),self.board))
+                        break
+                    else:
+                        break
+                else:
+                    break
+
+    def getKnightMoves(self,r,c,moves):
+        knightmoves = ((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1))
+        allycolor = 'w' if self.whitemove else 'b' #deciding which peice's turn
+        for m in knightmoves:
+            endrow = r + m[0]
+            endcol = c + m[1]
+            if 0 <= endrow < 8 and 0 <= endcol < 8:
+                endpeice = self.board[endrow][endcol]
+                if endpeice[0] != allycolor:
+                    moves.append(Move((r,c),(endrow,endcol),self.board))
 
 
 
@@ -68,6 +125,12 @@ class Move():
         self.endColumn = endSquare[1]
         self.peiceMoved = board[self.startRow][self.startColumn]
         self.peiceCaptured = board[self.endRow][self.endColumn]
+        self.MoveID = self.startRow*1000 + self.startColumn*100 + self.endRow*10 + self.endColumn
+
+    def __eq__(self, other):
+        if isinstance(other,Move):
+            return self.MoveID == other.MoveID
+        return False
 
     def getChessNotation(self):
         return self.getRankFile(self.startRow,self.startColumn) + self.getRankFile(self.endRow,self.endColumn)
