@@ -1,11 +1,11 @@
 '''
 this file contains the driver code and the GUI
 '''
-#start         end      date            comment
+#start         end          date                                comment
 #08:30 pm    11:00 pm    11/15/2020
 #11:30 am    02:00 pm    11/16/2020     chess layout is done but moves are not working properly
 #09:00 pm    10:15 pm    11/16/2020     fixed chess moves, peices could move but still no legal moves set
-
+#09:30 am    10:40 am    11/17/2020     implemented an undo move function and put the basis for legal moves function
 
 import pygame
 import chessengine
@@ -31,6 +31,7 @@ def main():
     clock = pygame.time.Clock()
     screen.fill(pygame.Color('white'))
     gs = chessengine.gameState()
+    validMoves = gs.getValidMoves()
     loadImages()
     running = True
     sqaureSelected = () #stores number of selected square
@@ -39,6 +40,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            #mouse events
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 location = pygame.mouse.get_pos() #gets x,y location of mouse
                 mCol = location[0]//squareSize
@@ -55,6 +57,10 @@ def main():
                     gs.makeMove(move)
                     sqaureSelected = () #reset the user click after clicking
                     playerClicks = []
+            #keyboard events
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_z:
+                    gs.undoMove()
 
 
 

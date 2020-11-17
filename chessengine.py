@@ -17,13 +17,41 @@ class gameState():
             ['wR','wN','wB','wQ','wK','wB','wN','wR']]
 
         self.whitemove = True
-        self.moveLog = []
+        self.moveLog = [] #creating a list of tuples to log the moves and store them
 
     def makeMove(self, move):
         self.board[move.startRow][move.startColumn] = '--'
         self.board[move.endRow][move.endColumn] = move.peiceMoved
         self.moveLog.append(move)
         self.whitemove = not self.whitemove #swaps players turns
+
+    def undoMove(self):
+        if len(self.moveLog) != 0:
+            move = self.moveLog.pop() #gets last move made
+            self.board[move.startRow][move.startColumn] = move.peiceMoved
+            self.board[move.endRow][move.endColumn] = move.peiceCaptured
+            self.whitemove = not self.whitemove #switching turns
+
+    def getValidMoves(self):
+        return self.getAllPossibleMoves()
+
+    def getAllPossibleMoves(self):
+        moves = []
+        for r in range(len(self.board)):
+            for c in range(len(self.board[r])):
+                turn = self.board[r][c][0] #gives the turn (white,black or non)
+                if (turn == 'w' and self.whitemove) and (turn == 'b' and not self.whitemove):
+                    piece = self.board[r][c][1] #get the type of peice
+                    if piece == 'P':
+                        #place holder for pawn legal moves function
+                        pass
+                    if piece == 'R':
+                        #place holder for rook legal moves function
+                        pass
+
+
+
+
 
 #creating the chess notation
 class Move():
