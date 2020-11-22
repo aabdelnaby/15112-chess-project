@@ -43,15 +43,21 @@ class gameState():
                 if (turn == 'w' and self.whitemove) or (turn == 'b' and not self.whitemove):
                     piece = self.board[r][c][1] #get the type of peice
                     if piece == 'P':
-                        self.getPawnMoves(r, c, moves)
+                        self.PawnMoves(r, c, moves)
                     if piece == 'R':
-                       self.getRookMoves(r, c, moves)
+                       self.RookMoves(r, c, moves)
                     if piece == 'N':
-                        self.getKnightMoves(r,c,moves)
+                        self.KnightMoves(r,c,moves)
+                    if piece == 'B':
+                        self.BishobMoves(r,c,moves)
+                    if piece == 'Q':
+                        self.QueenMoves(r,c,moves)
+                    if piece == 'K':
+                        self.KingMoves(r,c,moves)
         return moves
 
     #defining pawn legal moves
-    def getPawnMoves(self, r, c, moves):
+    def PawnMoves(self, r, c, moves):
         if self.whitemove:#white pawn moves
             if self.board[r-1][c] == '--': #if one space in front of the pawn is empty then it could move to it
                 moves.append(Move((r,c),(r-1,c),self.board))
@@ -77,10 +83,10 @@ class gameState():
 
 
 
-    def getRookMoves(self, r, c, moves):
-        directions = ((-1,0),(0,1),(1,0),(0,1))
+    def RookMoves(self, r, c, moves):
+        rooklist = ((-1,0),(0,1),(1,0),(0,1))
         enemyColor = 'b' if self.whitemove else 'w' #to check if white or black turn
-        for d in directions:
+        for d in rooklist:
             for i in range(1,8):
                 endrow = r + d[0]*i
                 endcol = c + d[1]*i
@@ -96,16 +102,58 @@ class gameState():
                 else:
                     break
 
-    def getKnightMoves(self,r,c,moves):
-        knightmoves = ((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1))
+    def KnightMoves(self,r,c,moves):
+        knightlist = ((-2,-1),(-2,1),(-1,-2),(-1,2),(1,-2),(1,2),(2,-1),(2,1)) #the moves that a knight could do in the form delta(r,c)
         allycolor = 'w' if self.whitemove else 'b' #deciding which peice's turn
-        for m in knightmoves:
+        for m in knightlist:
             endrow = r + m[0]
             endcol = c + m[1]
             if 0 <= endrow < 8 and 0 <= endcol < 8:
                 endpeice = self.board[endrow][endcol]
                 if endpeice[0] != allycolor:
                     moves.append(Move((r,c),(endrow,endcol),self.board))
+
+
+    def BishobMoves(self, r, c, moves):
+        bishoplist = ((1,1),(1,-1),(-1,1),(-1,-1)) #possible bishb moves in the form delta(r,c)
+        if self.whitemove:
+            eCol = 'b'
+        else:
+            eCol = 'w'
+        for i in bishoplist:
+            for j in range(1,8): #the range of the board
+                endcol = c + i[1]*j
+                endrow = r + i[0]*j
+                if 0 <= endrow < 8 and 0 <= endcol < 8:
+                    endpiece = self.board[endrow][endcol]
+                    if endpiece == '--':
+                        moves.append(Move((r,c),(endrow,endcol),self.board))
+                    elif endpiece[0] == eCol:
+                        moves.append(Move((r,c),(endrow,endcol),self.board))
+                        break
+                    else: #invalid move
+                        break
+                else: #not on board
+                    break
+
+    def QueenMoves(self, r, c, moves):
+        self.BishobMoves(r, c, moves)
+        self.RookMoves(r,c,moves)
+
+    def KingMoves(self, r, c, moves):
+        kinglist = ((1,1),(1,0),(0,1),(1,-1),(-1,1),(-1,0),(0,-1),(-1,-1))
+        if not self.whitemove:
+            eCol = 'b'
+        else:
+            eCol = 'w'
+        for i in range(8):
+            endrow = r + kinglist[i][0]
+            endcol = c + kinglist[i][1]
+            if 0 <= endrow < 8 and 0 <= endcol < 8: #make sure if peice on board
+                endpeice = self.board[endrow][endcol]
+                if endpeice[0] == eCol or endpeice == '--':
+                    moves.append(Move((r,c),(endrow,endcol), self.board))
+
 
 
 
@@ -138,8 +186,6 @@ class Move():
 
     def getRankFile(self, row, column):
         return self.colstofiles[column] + self.rowstoRanks[row]
-
-
 
 
 
