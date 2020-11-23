@@ -3,6 +3,8 @@ this file is the chess engine, it contains the information of the current game s
 determining the legal moves
 '''
 
+
+
 class gameState():
     def __init__(self):
         #this is the chess board, it is a list of lists
@@ -67,7 +69,8 @@ class gameState():
                 if self.board[r-1][c-1][0] == 'b':
                     moves.append(Move((r,c),(r-1,c-1),self.board))
             if c+1 <= 7: #captures right peice
-                moves.append(Move((r,c),(r-1,c+1),self.board))
+                if self.board[r - 1][c + 1][0] == 'b':
+                 moves.append(Move((r,c),(r-1,c+1),self.board))
         else:
             if self.board[r+1][c] == '--': #moves 1 or two front
                 moves.append(Move((r,c),(r+1,c),self.board))
@@ -173,11 +176,11 @@ class Move():
         self.endColumn = endSquare[1]
         self.peiceMoved = board[self.startRow][self.startColumn]
         self.peiceCaptured = board[self.endRow][self.endColumn]
-        self.MoveID = self.startRow*1000 + self.startColumn*100 + self.endRow*10 + self.endColumn
+        self.Move = self.startRow*1000 + self.startColumn*100 + self.endRow*10 + self.endColumn
 
     def __eq__(self, other):
         if isinstance(other,Move):
-            return self.MoveID == other.MoveID
+            return self.Move == other.Move
         return False
 
     def getChessNotation(self):
@@ -186,20 +189,3 @@ class Move():
 
     def getRankFile(self, row, column):
         return self.colstofiles[column] + self.rowstoRanks[row]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
