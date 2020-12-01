@@ -48,14 +48,7 @@ class gameState():
         self.board[move.endRow][move.endColumn] = move.peiceMoved
         self.moveLog.append(move)
         self.swapTurns() #swaps players turns
-        #self.legalMoves()
-        #print(self.whiteKingLocation(),self.blackKingLocation())
         self.ischeckmate()
-        #print('is cMate', self.cMate)
-        #print(self.ischeckmate())
-        #print('is checkmate' ,self.checkmate())
-        #print(len(self.legalMoves))
-
 
     def undoMove(self):
         if len(self.moveLog) != 0:
@@ -130,7 +123,7 @@ class gameState():
 
     #defining pawn legal moves
     def pawnMoves(self, r, c):
-        if r <= 6 and c <= 6:
+        #if r <= 6 and c <= 6:
             if self.whitemove:#white pawn moves
                 if self.board[r-1][c] == '--': #if one space in front of the pawn is empty then it could move to it
                     self.moves.append(move((r,c),(r-1,c),self.board))
@@ -167,7 +160,7 @@ class gameState():
             for i in range(1,8):
                 endrow = r + d[0]*i
                 endcol = c + d[1]*i
-                if 0<= endrow < 8 and 0 <= endcol < 8:
+                if 0<= endrow <= 7 and 0 <= endcol <= 7:
                     endPiece = self.board[endrow][endcol]
                     if endPiece == '--':
                         self.moves.append(move((r,c),(endrow,endcol),self.board))
@@ -259,19 +252,7 @@ class gameState():
                 if j[0] == 'w':
                     self.whitePeicesNum += 1
 
-    def randMove(self):
-        legalMoves = self.legalMove()
-        return random.choice(legalMoves)
-
-    def AImove(self):
-        move = chessAI.AI
-
-
-
-
-
-
-########################################################################################################################
+################################################################
 
 #creating the chess notation
 class move():
@@ -297,7 +278,6 @@ class move():
 
     def getChessNotation(self):
         return self.getRankFile(self.startRow,self.startColumn) + self.getRankFile(self.endRow,self.endColumn)
-
 
     def getRankFile(self, row, column):
         return self.colstofiles[column] + self.rowstoRanks[row]

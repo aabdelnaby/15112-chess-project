@@ -19,6 +19,12 @@ this file contains the driver code and the GUI
 #06:30 am    09:00 am    11/29/2020
 #12:00 pm    02:30 pm    11/30/2020
 #10:00 am    09:30 pm    12/01/2020     implemented a working AI
+
+# citations
+# https://www.freecodecamp.org/news/simple-chess-ai-step-by-step-1d55a9266977/
+# https://www.youtube.com/watch?v=xSy8k6GfuqY
+# https://www.youtube.com/watch?v=mM_0FasqD8c
+
 import pygame
 import chessengine
 import chessAI
@@ -136,21 +142,4 @@ class chessgame:
         screen.blit(text1,textLoc)
 
 cgame = chessgame()
-
-
-#opensc = openingScreen()
 cgame.main()
-
-#opensc.main()
-
-
-
-
-
-
-
-
-
-
-
-
